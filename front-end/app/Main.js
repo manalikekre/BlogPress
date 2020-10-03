@@ -21,6 +21,8 @@ import EditPost from './components/EditPost';
 import NotFound from './components/NotFound';
 import Search from './components/Search';
 import { CSSTransition } from 'react-transition-group';
+import Chat from './components/Chat';
+
 Axios.defaults.baseURL = 'http://localhost:8080';
 
 function Main() {
@@ -33,6 +35,8 @@ function Main() {
 			avatar: localStorage.getItem('blogpressAvatar'),
 		},
 		displaySearch: false,
+		isChatOpen: false,
+		unreadChatCount: 0,
 	};
 
 	function ourReducer(draft, action) {
@@ -52,6 +56,18 @@ function Main() {
 				return;
 			case 'hideSearch':
 				draft.displaySearch = false;
+				return;
+			case 'toggleChat':
+				draft.isChatOpen = !draft.isChatOpen;
+				return;
+			case 'closeChat':
+				draft.isChatOpen = false;
+				return;
+			case 'incrementUnreadChatCount':
+				draft.unreadChatCount++;
+				return;
+			case 'clearUnreadChatCount':
+				draft.unreadChatCount = 0;
 				return;
 		}
 	}
@@ -111,7 +127,7 @@ function Main() {
 					>
 						<Search />
 					</CSSTransition>
-
+					<Chat />
 					<Footer />
 				</BrowserRouter>
 			</DispatchContext.Provider>
