@@ -15,7 +15,7 @@ const CreatePost = React.lazy(() => import('./components/CreatePost'));
 const Search = React.lazy(() => import('./components/Search'));
 const Chat = React.lazy(() => import('./components/Chat'));
 import Axios from 'axios';
-import ViewSinglePost from './components/ViewSinglePost';
+const ViewSinglePost = React.lazy(() => import('./components/ViewSinglePost'));
 import StateContext from './StateContext';
 import DispatchContext from './DispatchContext';
 import Profile from './components/Profile';
@@ -24,7 +24,7 @@ import NotFound from './components/NotFound';
 import { CSSTransition } from 'react-transition-group';
 import LoadingIcon from './components/LoadingIcon';
 
-Axios.defaults.baseURL = 'http://localhost:8080';
+Axios.defaults.baseURL = process.env.BACKENDURL || '';
 
 function Main() {
 	const initialState = {
