@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useEffect } from 'react';
+import React, { useState, useReducer, useEffect, Suspense } from 'react';
 import { useImmerReducer } from 'use-immer';
 import ReactDOM from 'react-dom';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
@@ -11,7 +11,9 @@ import Home from './components/Home';
 import Footer from './components/Footer';
 import About from './components/About';
 import Terms from './components/Terms';
-import CreatePost from './components/CreatePost';
+const CreatePost = React.lazy(() => import('./components/CreatePost'));
+const Search = React.lazy(() => import('./components/Search'));
+const Chat = React.lazy(() => import('./components/Chat'));
 import Axios from 'axios';
 import ViewSinglePost from './components/ViewSinglePost';
 import StateContext from './StateContext';
@@ -19,9 +21,8 @@ import DispatchContext from './DispatchContext';
 import Profile from './components/Profile';
 import EditPost from './components/EditPost';
 import NotFound from './components/NotFound';
-import Search from './components/Search';
 import { CSSTransition } from 'react-transition-group';
-import Chat from './components/Chat';
+import LoadingIcon from './components/LoadingIcon';
 
 Axios.defaults.baseURL = 'http://localhost:8080';
 
@@ -86,48 +87,81 @@ function Main() {
 		}
 	}, [state.loggedIn]);
 
+	//check if token expired or not
+	useEffect(() => {
+		if (state.loggedIn) {
+			const ourRequest = Axios.CancelToken.source();
+			async function fetchResults() {
+				try {
+					const response = await Axios.post(
+						'/checkToken',
+						{ token: state.user.token },
+						{ cancelToken: ourRequest.CancelToken }
+					);
+					if (!response.data) {
+						dispatch({ type: 'loggedOut' });
+						dispatch({
+							type: 'addFlashMessage',
+							message: 'Your session has expired. Please log in again.',
+						});
+					}
+				} catch (e) {
+					console.log('Error occurred - ', e);
+				}
+			}
+			fetchResults();
+			return ourRequest.cancel();
+		}
+	}, []);
+
 	return (
 		<StateContext.Provider value={state}>
 			<DispatchContext.Provider value={dispatch}>
 				<BrowserRouter>
 					<FlashMessage />
 					<Header />
-					<Switch>
-						<Route path="/" exact>
-							{state.loggedIn ? <Home /> : <HomeGuest />}
-						</Route>
-						<Route path="/about-us">
-							<About />
-						</Route>
-						<Route path="/profile/:username">
-							<Profile />
-						</Route>
-						<Route path="/post/:id" exact>
-							<ViewSinglePost />
-						</Route>
-						<Route path="/post/:id/edit" exact>
-							<EditPost />
-						</Route>
+					<Suspense fallback={<LoadingIcon />}>
+						<Switch>
+							<Route path="/" exact>
+								{state.loggedIn ? <Home /> : <HomeGuest />}
+							</Route>
+							<Route path="/about-us">
+								<About />
+							</Route>
+							<Route path="/profile/:username">
+								<Profile />
+							</Route>
+							<Route path="/post/:id" exact>
+								<ViewSinglePost />
+							</Route>
+							<Route path="/post/:id/edit" exact>
+								<EditPost />
+							</Route>
 
-						<Route path="/terms">
-							<Terms />
-						</Route>
-						<Route path="/create-post">
-							<CreatePost />
-						</Route>
-						<Route>
-							<NotFound />
-						</Route>
-					</Switch>
+							<Route path="/terms">
+								<Terms />
+							</Route>
+							<Route path="/create-post">
+								<CreatePost />
+							</Route>
+							<Route>
+								<NotFound />
+							</Route>
+						</Switch>
+					</Suspense>
 					<CSSTransition
 						timeout={300}
 						classNames="search-overlay"
 						unmountOnExit
 						in={state.displaySearch}
 					>
-						<Search />
+						<div className="search-overlay">
+							<Suspense fallback="">
+								<Search />
+							</Suspense>
+						</div>
 					</CSSTransition>
-					<Chat />
+					<Suspense fallback="">{state.loggedIn && <Chat />}</Suspense>
 					<Footer />
 				</BrowserRouter>
 			</DispatchContext.Provider>
