@@ -24,7 +24,8 @@ import NotFound from './components/NotFound';
 import { CSSTransition } from 'react-transition-group';
 import LoadingIcon from './components/LoadingIcon';
 
-Axios.defaults.baseURL = process.env.BACKENDURL || '';
+Axios.defaults.baseURL =
+	process.env.BACKENDURL || 'https://backendblogpress.herokuapp.com';
 
 function Main() {
 	const initialState = {
