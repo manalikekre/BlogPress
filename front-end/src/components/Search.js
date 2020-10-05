@@ -61,7 +61,8 @@ function Search() {
 	function onChangeHandler(e) {
 		const value = e.target.value;
 		setState((draft) => {
-			(draft.searchTerm = value), (draft.show = 'loading');
+			draft.searchTerm = value;
+			draft.show = 'loading';
 		});
 	}
 	return (

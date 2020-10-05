@@ -2,7 +2,7 @@ import React, { useState, useReducer, useEffect, Suspense } from 'react';
 import { useImmerReducer } from 'use-immer';
 import ReactDOM from 'react-dom';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-
+import './main.css';
 // My components
 import Header from './components/Header';
 import HomeGuest from './components/HomeGuest';
@@ -11,11 +11,9 @@ import Home from './components/Home';
 import Footer from './components/Footer';
 import About from './components/About';
 import Terms from './components/Terms';
-const CreatePost = React.lazy(() => import('./components/CreatePost'));
-const Search = React.lazy(() => import('./components/Search'));
-const Chat = React.lazy(() => import('./components/Chat'));
+
 import Axios from 'axios';
-const ViewSinglePost = React.lazy(() => import('./components/ViewSinglePost'));
+
 import StateContext from './StateContext';
 import DispatchContext from './DispatchContext';
 import Profile from './components/Profile';
@@ -24,8 +22,12 @@ import NotFound from './components/NotFound';
 import { CSSTransition } from 'react-transition-group';
 import LoadingIcon from './components/LoadingIcon';
 
-Axios.defaults.baseURL =
-	process.env.BACKENDURL || 'https://backendblogpress.herokuapp.com';
+const CreatePost = React.lazy(() => import('./components/CreatePost'));
+const Search = React.lazy(() => import('./components/Search'));
+const Chat = React.lazy(() => import('./components/Chat'));
+const ViewSinglePost = React.lazy(() => import('./components/ViewSinglePost'));
+
+Axios.defaults.baseURL = process.env.BACKENDURL || 'http://localhost:8080';
 
 function Main() {
 	const initialState = {
@@ -170,8 +172,9 @@ function Main() {
 	);
 }
 
-ReactDOM.render(<Main />, document.querySelector('#app'));
+ReactDOM.render(<Main />, document.getElementById('root'));
 
 if (module.hot) {
 	module.hot.accept();
 }
+//export default Main;
