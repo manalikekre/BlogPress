@@ -1,4 +1,8 @@
+[build]
+  command = "npm run build"
+  publish="front-end/build"
+  base = "front-end"
 [[redirects]]
-    from ="/*"
-    to = "/front-end/index.html"
-    status = 200
+  from = "/*"
+  to = "/index.html"
+  status = 200
