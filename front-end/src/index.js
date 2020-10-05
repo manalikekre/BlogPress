@@ -27,7 +27,8 @@ const Search = React.lazy(() => import('./components/Search'));
 const Chat = React.lazy(() => import('./components/Chat'));
 const ViewSinglePost = React.lazy(() => import('./components/ViewSinglePost'));
 
-Axios.defaults.baseURL = process.env.BACKENDURL || 'http://localhost:8080';
+Axios.defaults.baseURL =
+	process.env.BACKENDURL || 'https://backendblogpress.herokuapp.com';
 
 function Main() {
 	const initialState = {
